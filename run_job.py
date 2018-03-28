@@ -44,5 +44,11 @@ job = LauncherJob(
     debug=debug,
     gather_output='ncinet_output')
 
-job.run()
-print job.final_report()
+
+def main():
+    job.run()
+    print job.final_report()
+
+
+if __name__ == '__main__':
+    main()
