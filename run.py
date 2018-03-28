@@ -9,7 +9,7 @@ sys.path.append(os.getcwd())
 
 
 def run():
-    from .run_job import main
+    from hyper_opt.run_job import main
     main()
 
 
