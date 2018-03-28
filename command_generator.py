@@ -3,7 +3,8 @@ import os
 import errno
 import yaml
 from pylauncher import CommandlineGenerator, Commandline
-from . import NCINET_PATH
+
+NCINET_PATH = "/work/05187/ams13/maverick/ncinet_dev/run.py"
 
 
 def ensure_dir(target_dir):
