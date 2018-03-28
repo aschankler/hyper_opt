@@ -3,7 +3,7 @@ import numpy as np
 import yaml
 import sys
 
-NCINET_PATH = "/work/05187/ams13/maverick/ncinet_dev/run.py"
+NCINET_PATH = "/work/05187/ams13/maverick/ncinet_dev"
 
 # This is needed for yaml to load the parameter objects
 sys.path.append(NCINET_PATH)
