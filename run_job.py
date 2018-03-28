@@ -8,7 +8,7 @@ from executor import EnvSSHExecutor
 from command_generator import HyperCommandGenerator
 from gen_param_dict import make_configs
 
-CONFIG_DIR = "/work/05187/ams13/maverick/Working/opt_config"
+
 #job_file = os.path.join(os.getcwd(), 'pylauncher/examples/commandlines')
 
 jobid = JobId()
@@ -19,7 +19,7 @@ cores = 1
 # This generates a list of command lines to run
 #cmd_gen = FileCommandlineGenerator(job_file, cores=cores, debug=debug)
 param_configs = make_configs('config_random.yaml', 4)
-cmd_gen = HyperCommandGenerator(param_configs, config_dir=CONFIG_DIR)
+cmd_gen = HyperCommandGenerator(param_configs)
 
 # Wraps command line generators with info about whether tasks have completed/how to run the task
 task_gen = TaskGenerator(cmd_gen,
@@ -41,14 +41,7 @@ host_pool = HostPool(hostlist=HostListByName(), commandexecutor=executor, debug=
 job = LauncherJob(
     hostpool=host_pool,
     taskgenerator=task_gen,
-    debug=debug,
-    gather_output='ncinet_output')
+    debug=debug)
 
-
-def main():
-    job.run()
-    print job.final_report()
-
-
-if __name__ == '__main__':
-    main()
+job.run()
+print job.final_report()
