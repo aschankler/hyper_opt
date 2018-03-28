@@ -33,7 +33,6 @@ class EnvSSHExecutor(SSHExecutor):
                       self.debug, prefix="SSH")
         ssh = self.node_client_dict[hostname]
         try:
-            return  # Disable actual running of commands
             stdin, stdout, stderr = \
                 ssh.exec_command("( %s ) &" % wrapped_line)
         except:  # old paramiko value? ChannelException:

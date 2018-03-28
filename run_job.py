@@ -4,13 +4,12 @@ from pylauncher import JobId, FileCommandlineGenerator, TaskGenerator, FileCompl
 from pylauncher import HostPool, HostListByName
 from pylauncher import LauncherJob
 
-from pylauncher import Completion
 from executor import EnvSSHExecutor
 from command_generator import HyperCommandGenerator
 from gen_param_dict import make_configs
 
 
-job_file = os.path.join(os.getcwd(), 'pylauncher/examples/commandlines')
+#job_file = os.path.join(os.getcwd(), 'pylauncher/examples/commandlines')
 
 jobid = JobId()
 debug = "job+host"
@@ -24,7 +23,7 @@ cmd_gen = HyperCommandGenerator(param_configs)
 
 # Wraps command line generators with info about whether tasks have completed/how to run the task
 task_gen = TaskGenerator(cmd_gen,
-                         completion=lambda x: None,  #lambda x: FileCompletion(taskid=x, stamproot="expire", stampdir=workdir),
+                         completion=lambda x: FileCompletion(taskid=x, stamproot="expire", stampdir=workdir),
                          debug=debug)
 
 # Set up the env for the worker shells
