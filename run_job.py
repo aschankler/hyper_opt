@@ -20,7 +20,7 @@ cores = 1
 # This generates a list of command lines to run
 #cmd_gen = FileCommandlineGenerator(job_file, cores=cores, debug=debug)
 param_configs = make_configs('config_random.yaml', 4)
-cmd_gen = HyperCommandGenerator
+cmd_gen = HyperCommandGenerator(param_configs)
 
 # Wraps command line generators with info about whether tasks have completed/how to run the task
 task_gen = TaskGenerator(cmd_gen,

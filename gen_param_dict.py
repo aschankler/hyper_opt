@@ -1,4 +1,5 @@
 
+import numpy as np
 import yaml
 import sys
 
@@ -13,6 +14,14 @@ def make_configs(conf_file, n_configs):
         param_list = []
         for _ in range(n_configs):
             param_dict = {k: v.render() for k, v in params['var_params'].iteritems()}
+
+            # Purge numpy floats
+            for k, v in param_dict.iteritems():
+                if isinstance(v, np.float):
+                    param_dict[k] = float(v)
+                elif hasattr(v, '__iter__'):
+                    param_dict[k] = map(float, v)
+
             param_dict.update(params['fixed_params'])
             param_list.append(param_dict)
 
