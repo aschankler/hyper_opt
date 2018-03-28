@@ -21,7 +21,7 @@ cores = 1
 #cmd_gen = FileCommandlineGenerator(job_file, cores=cores, debug=debug)
 
 from command_generator import pushdir
-with pushdir("../param_opt"):
+with pushdir("../hyper_opt"):
     param_configs = make_configs('config_random.yaml', 4)
 cmd_gen = HyperCommandGenerator(param_configs, config_dir=config_dir)
 
