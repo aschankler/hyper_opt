@@ -6,6 +6,9 @@ from pylauncher import LauncherJob
 
 from pylauncher import Completion
 from executor import EnvSSHExecutor
+from command_generator import HyperCommandGenerator
+from gen_param_dict import make_configs
+
 
 job_file = os.path.join(os.getcwd(), 'pylauncher/examples/commandlines')
 
@@ -15,7 +18,9 @@ workdir = "pylauncher_tmp" + str(jobid)
 cores = 1
 
 # This generates a list of command lines to run
-cmd_gen = FileCommandlineGenerator(job_file, cores=cores, debug=debug)
+#cmd_gen = FileCommandlineGenerator(job_file, cores=cores, debug=debug)
+param_configs = make_configs('config_random.yaml', 4)
+cmd_gen = HyperCommandGenerator
 
 # Wraps command line generators with info about whether tasks have completed/how to run the task
 task_gen = TaskGenerator(cmd_gen,
