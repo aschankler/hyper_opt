@@ -24,7 +24,7 @@ cmd_gen = HyperCommandGenerator(param_configs)
 
 # Wraps command line generators with info about whether tasks have completed/how to run the task
 task_gen = TaskGenerator(cmd_gen,
-                         completion=Completion(),  #lambda x: FileCompletion(taskid=x, stamproot="expire", stampdir=workdir),
+                         completion=lambda x: None,  #lambda x: FileCompletion(taskid=x, stamproot="expire", stampdir=workdir),
                          debug=debug)
 
 # Set up the env for the worker shells
