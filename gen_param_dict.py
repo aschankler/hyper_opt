@@ -2,9 +2,9 @@
 import numpy as np
 import yaml
 import sys
+from . import NCINET_PATH
 
 # This is needed for yaml to load the parameter objects
-NCINET_PATH = "/work/05187/ams13/maverick/ncinet_dev"
 sys.path.append(NCINET_PATH)
 
 
