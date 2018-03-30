@@ -8,7 +8,7 @@ from pylauncher import LauncherException, DebugTraceMsg
 
 
 class EnvSSHExecutor(SSHExecutor):
-    """Modify the excecute method to change environment"""
+    """Modify the execute method to change environment"""
     def __init__(self, env_str='', **kw):
         self.env = env_str
         SSHExecutor.__init__(self, **kw)

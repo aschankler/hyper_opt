@@ -1,33 +1,15 @@
+"""
+Overrides commandline generator to generate hyperparameter config files and then generate
+commandlines using that file.
+"""
 
 import os
-import errno
 import yaml
+
 from pylauncher import CommandlineGenerator, Commandline
+from util import ensure_dir, pushdir
 
 NCINET_PATH = "/work/05187/ams13/maverick/ncinet_dev/run.py"
-
-
-def ensure_dir(target_dir):
-    """Ensure a directory exists"""
-    if not os.path.exists(target_dir):
-        try:
-            os.makedirs(target_dir)
-        except OSError as err:
-            if err.errno != errno.EEXIST:
-                raise
-
-
-class pushdir(object):
-    """Change directories for the duration of a with statement."""
-    def __init__(self, path):
-        self.path = os.path.abspath(path)
-
-    def __enter__(self):
-        self._cwd = os.getcwd()
-        os.chdir(self.path)
-
-    def __exit__(self, *args):
-        os.chdir(self._cwd)
 
 
 def make_commandline(params, index, in_name='hyper_config', out_name='results'):

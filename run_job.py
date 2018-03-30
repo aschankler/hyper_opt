@@ -1,28 +1,31 @@
 
 import os
-from pylauncher import JobId, FileCommandlineGenerator, TaskGenerator, FileCompletion
+from pylauncher import JobId, TaskGenerator, FileCompletion
 from pylauncher import HostPool, HostListByName
 from pylauncher import LauncherJob
 
 from executor import EnvSSHExecutor
 from command_generator import HyperCommandGenerator
 from gen_param_dict import make_configs
+from util import pushdir, ensure_dir
 
-OPT_DIR = "/work/05187/ams13/maverick/Working/param_opt"
-#job_file = os.path.join(os.getcwd(), 'pylauncher/examples/commandlines')
 
+# Dir to contain optimization files
+opt_dir = "/work/05187/ams13/maverick/Working/param_opt"
+ensure_dir(opt_dir)
+
+# Make dirs for launcher records and ncinet config files
 jobid = JobId()
 debug = "job+host"
-launcher_dir = os.path.join(OPT_DIR, "pylauncher_tmp" + str(jobid))
-config_dir = os.path.join(OPT_DIR, "config")
-cores = 1
+launcher_dir = os.path.join(opt_dir, "pylauncher_tmp" + str(jobid))
+config_dir = os.path.join(opt_dir, "config")
+
+# Create a list of hyperparameter configurations
+root = os.path.abspath(os.path.dirname(__file__))
+with pushdir(root):
+    param_configs = make_configs('config_random.yaml', 4)
 
 # This generates a list of command lines to run
-#cmd_gen = FileCommandlineGenerator(job_file, cores=cores, debug=debug)
-
-from command_generator import pushdir
-with pushdir("../hyper_opt"):
-    param_configs = make_configs('config_random.yaml', 4)
 cmd_gen = HyperCommandGenerator(param_configs, config_dir=config_dir)
 
 # Wraps command line generators with info about whether tasks have completed/how to run the task
@@ -40,12 +43,14 @@ executor = EnvSSHExecutor(env_str=env_str, workdir=launcher_dir, debug=debug)
 
 host_pool = HostPool(hostlist=HostListByName(), commandexecutor=executor, debug=debug)
 
+with pushdir(opt_dir):
+    # Also has a "maxruntime" param, a "gather_output" param
+    job = LauncherJob(
+        hostpool=host_pool,
+        taskgenerator=task_gen,
+        debug=debug,
+        gather_output='ncinet_out',
+        delay=20.)
 
-# Also has a "maxruntime" param, a "gather_output" param
-job = LauncherJob(
-    hostpool=host_pool,
-    taskgenerator=task_gen,
-    debug=debug)
-
-job.run()
-print job.final_report()
+    job.run()
+    print job.final_report()
