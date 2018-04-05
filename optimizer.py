@@ -147,6 +147,7 @@ class HillClimbOptimizer:
 
         # Write data
         self.save_results(config_list, result_list)
+        result_list = map(lambda x: x[0], result_list)
 
         # Update params if this is the first run
         if self.best_value is None:

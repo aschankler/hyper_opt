@@ -56,7 +56,8 @@ def input_fn(input_dict):
 def output_fn(result_dict):
     """Picks out error, averages, inverts"""
     res = np.mean(result_dict['error'])
-    return - float(res)
+    sd = np.std(result_dict['error'])
+    return - float(res), float(sd)
 
 
 # construct mapper
