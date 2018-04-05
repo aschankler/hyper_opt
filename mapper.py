@@ -5,7 +5,7 @@ Maps batches of ncinet evaluations across several nodes.
 import os
 import time
 from command_generator import make_commandline
-from util import pushdir
+from util import ensure_dir, pushdir
 from pylauncher import Commandline, DynamicCommandlineGenerator
 from pylauncher import LauncherJob, TaskGenerator, LauncherException, DebugTraceMsg
 
@@ -13,8 +13,9 @@ from pylauncher import LauncherJob, TaskGenerator, LauncherException, DebugTrace
 class DynamicNciCommandGen(DynamicCommandlineGenerator):
     """Takes a param dict, writes it to file and produces a training command"""
     def __init__(self, work_dir=None, **kwargs):
-        DynamicCommandlineGenerator.__init__(**kwargs)
+        DynamicCommandlineGenerator.__init__(self, **kwargs)
         self.work_dir = work_dir if work_dir is not None else os.getcwd()
+        ensure_dir(self.work_dir)
 
     def append(self, param_dict):
         """Append a unix command to the internal structure of the generator"""

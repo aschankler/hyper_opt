@@ -20,7 +20,7 @@ ensure_dir(opt_dir)
 jobid = JobId()
 debug = "job+host"
 launcher_dir = os.path.join(opt_dir, "pylauncher_tmp" + str(jobid))
-config_dir = os.path.join(opt_dir, "config")
+config_dir = os.path.join(opt_dir, "config" + str(jobid))
 
 opt_out_file = os.path.join(opt_dir, 'optimizer_save')
 opt_max_steps = 2
@@ -41,9 +41,16 @@ host_pool = HostPool(hostlist=HostListByName(), commandexecutor=executor, debug=
 
 
 # Define pre and post processing for the mapper
-def input_fn(param_dict):
+def input_fn(input_dict):
     """Add unoptimized parameters to the configuration"""
-    return param_dict.update(config_dict['fixed_params'])
+    input_dict.update(config_dict['fixed_params'])
+    param_dict = {'initial_learning_rate': input_dict['initial_learning_rate'],
+                  'n_filters': (input_dict['n_filt_0'], input_dict['n_filt_1'], input_dict['n_filt_2']),
+                  'reg_weight': (input_dict['reg_0'], input_dict['reg_1'], input_dict['reg_2']),
+                  'train_batch_size': input_dict['train_batch_size'],
+                  'epochs_per_decay': input_dict['epochs_per_decay'],
+                  'filter_size': input_dict['filter_size'], 'max_steps': input_dict['max_steps']}
+    return param_dict
 
 
 def output_fn(result_dict):
