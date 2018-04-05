@@ -22,7 +22,7 @@ debug = "job+host"
 launcher_dir = os.path.join(opt_dir, "pylauncher_tmp" + str(jobid))
 config_dir = os.path.join(opt_dir, "config" + str(jobid))
 
-opt_out_file = os.path.join(opt_dir, 'optimizer_save')
+opt_out_file = os.path.join(opt_dir, 'optimizer_save_' + str(jobid))
 opt_max_steps = 2
 
 # Load config for optimization
