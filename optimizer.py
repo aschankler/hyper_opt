@@ -5,10 +5,12 @@ A simple hill-climbing optimizer for hyperparameter search.
 from __future__ import division
 import numpy as np
 import time
-from typing import Tuple, Sequence, Mapping, Union, Generic, TypeVar
+from typing import List, Tuple, Set, Sequence, Mapping, Union, Callable, Generic, TypeVar
 
 # Type of an optimized parameter
 P_type = TypeVar("P_type", int, float)
+# Type of a complete set of parameters
+Config_T = Mapping[str, Union[float, int]]
 
 
 class Parameter(Generic[P_type]):
@@ -79,21 +81,23 @@ class Parameter(Generic[P_type]):
         return yaml.load(yaml_str)
 
 
-# takes an objective mapper, a starting point, and a delta
-# does hill climb optimization
-# Writes progress to file
-# Has a terminate instruction
 class HillClimbOptimizer:
     """Simple hill climb optimizer"""
     def __init__(self, param_settings, mapper):
-        # type: (Mapping[str, Mapping[str, Union[float, int]]], LauncherMapper) -> None
-        self.best_config = {k: v['init'] for k, v in param_settings.iteritems()}
-        self.best_value = None
-        self.last_best_value = None
-        self.parameters = {Parameter(k, v['init'], v['step']) for k, v in param_settings.iteritems()}
-        self.mapper = mapper
-        self.tick = 0
+        # type: (Mapping[str, Config_T], Callable[[Sequence[Config_T]], List[float]]) -> None
+        self.parameters = None                  # type: Set[Parameter]
+        self.best_config = None                 # type: Config_T
+        self.best_value = None                  # type: float
+        self.last_best_value = None             # type: float
+
+        self.tick = 1
         self.start_time = 0
+        self.stop_flag = False
+        self.out_file = None
+
+        self.parameters = {Parameter(k, v['init'], v['step']) for k, v in param_settings.iteritems()}
+        self.best_config = {k: v['init'] for k, v in param_settings.iteritems()}
+        self.mapper = mapper
 
     def opt_step(self):
         # type: () -> None
@@ -141,6 +145,9 @@ class HillClimbOptimizer:
         # Map
         result_list = self.mapper(config_list)
 
+        # Write data
+        self.save_results(config_list, result_list)
+
         # Update params if this is the first run
         if self.best_value is None:
             self.best_value = result_list.pop()
@@ -163,7 +170,16 @@ class HillClimbOptimizer:
         for par in self.parameters:
             par.update(result_dict[par.name], self.best_value, par.name == best_tag)
 
-    def write_data(self, out_path):
+    def save_results(self, configs, results):
+        # type: (Sequence[Config_T], Sequence[float]) -> None
+        """Write map output to file"""
+        import yaml
+        records = map(lambda cfg, res: {'config': cfg, 'result': res}, configs, results)
+        with open(self.out_file, 'a') as out_file:
+            out_file.write('---\n')
+            yaml.dump(records, out_file)
+
+    def write_data(self):
         import yaml
         params = [par.serialize() for par in self.parameters]
 
@@ -173,7 +189,8 @@ class HillClimbOptimizer:
                    'value': self.best_value,
                    'param_data': params}
 
-        with open(out_path, 'a') as out_file:
+        with open(self.out_file, 'a') as out_file:
+            out_file.write('---\n')
             yaml.dump(records, out_file)
 
     def should_stop(self, max_steps=None, max_time=None):
@@ -181,13 +198,12 @@ class HillClimbOptimizer:
             return True
         if max_time is not None and time.time() - self.start_time > max_time:
             return True
-        return False
+        return self.stop_flag
 
     def run(self, out_file, max_steps):
         self.start_time = time.time()
+        self.out_file = out_file
         while not self.should_stop(max_steps=max_steps):
             self.tick += 1
             self.opt_step()
-            self.write_data(out_file)
-
-
+            self.write_data()
