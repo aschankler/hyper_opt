@@ -204,6 +204,6 @@ class HillClimbOptimizer:
         self.start_time = time.time()
         self.out_file = out_file
         while not self.should_stop(max_steps=max_steps):
-            self.tick += 1
             self.opt_step()
             self.write_data()
+            self.tick += 1
