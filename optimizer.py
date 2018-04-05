@@ -164,10 +164,17 @@ class HillClimbOptimizer:
             par.update(result_dict[par.name], self.best_value, par.name == best_tag)
 
     def write_data(self, out_path):
+        import yaml
+        params = [par.serialize() for par in self.parameters]
+
+        records = {'round': self.tick,
+                   'run_time': time.time() - self.start_time,
+                   'config': self.best_config,
+                   'value': self.best_value,
+                   'param_data': params}
+
         with open(out_path, 'a') as out_file:
-            for par in self.parameters:
-                out_file.write(par.serialize())
-                out_file.write('\n---\n')
+            yaml.dump(records, out_file)
 
     def should_stop(self, max_steps=None, max_time=None):
         if max_steps is not None and self.tick > max_steps:
